@@ -1,6 +1,3 @@
-import time
-start = time.time()
-
 rows_cnt, cols_cnt = 30, 30
 
 row_lines = [
@@ -176,26 +173,6 @@ for idx, cols in enumerate(col_lines) :
         dfs(cols, small_board)
         col_casts[idx] = small_boards
         calced[cols_name] = small_boards
-    
-def check_board() :
-    for col_number in range(cols_cnt) :
-        col_line = col_lines[col_number]
-        line = []
-        c = 0
-        for t in board :
-            if t[col_number] == 1 :
-                c +=1
-            elif t[col_number] == 0 and c != 0 :
-                line.append(c)
-                c = 0
-        if c != 0 :
-            line.append(c)
-        elif c == 0 and len(line) == 0 :
-            line.append(0)
-            
-        if line != col_line :
-            return False
-    return True
 
 def print_board(simple = True) :
     if simple :
@@ -249,103 +226,6 @@ def is_can_cast(axis, key, cast) :
                     return False
         return True
 
-tries = 0
-print('before')
-a, b = 0, 0
-c, d = 1, 1
-for key in row_casts :
-    a += len(row_casts[key])
-    c *= len(row_casts[key])
-    b += len(col_casts[key])
-    d *= len(col_casts[key])
-print(a, b)
-print(c, d)
-
-# 기존 코드
-'''
-while True :
-    tries += 1
-    # 전부 채워져 있는 보드 생성
-    tmp_board_row = [[1 for _ in range(cols_cnt)] for __ in range(rows_cnt)]
-    tmp_board_col = [[1 for _ in range(cols_cnt)] for __ in range(rows_cnt)]
-
-    # 실행 전 가능한 경우의 수
-    before_row_cnt = 0
-    before_col_cnt = 0
-    
-    # 채워져 있는 보드에서 공백 칸 분류
-    for a in row_casts :
-        before_row_cnt += len(row_casts[a])
-        for cast in row_casts[a] :
-            for idx, ea in enumerate(cast) :
-                if ea == 0 :
-                    tmp_board_row[a][idx] = 0
-                    
-    for a in col_casts :
-        before_col_cnt += len(col_casts[a])
-        for cast in col_casts[a] :
-            for idx, ea in enumerate(cast) :
-                if ea == 0 :
-                    tmp_board_col[idx][a] = 0
-
-    # 확실히 채워져 있는 블럭을 보드로 옮기기
-    for row_idx in range(len(tmp_board_row)) :
-        for col_idx in range(len(tmp_board_col)) :
-            if tmp_board_row[row_idx][col_idx] == 1 :
-                board[row_idx][col_idx] = 1
-            if tmp_board_col[row_idx][col_idx] == 1 :
-                board[row_idx][col_idx] = 1
-    
-    # 전부 막혀져 있는 보드 생성
-    tmp_board_row = [[-1 for _ in range(cols_cnt)] for __ in range(rows_cnt)]
-    tmp_board_col = [[-1 for _ in range(cols_cnt)] for __ in range(rows_cnt)]
-
-    # 채워져 있는 보드에서 공백 칸 분류
-    for a in row_casts :
-        for cast in row_casts[a] :
-            for idx, ea in enumerate(cast) :
-                if ea == 1 :
-                    tmp_board_row[a][idx] = 0
-                    
-    for a in col_casts :
-        for cast in col_casts[a] :
-            for idx, ea in enumerate(cast) :
-                if ea == 1 :
-                    tmp_board_col[idx][a] = 0
-
-    # 확실히 채워져 있는 블럭을 보드로 옮기기
-    for row_idx in range(len(tmp_board_row)) :
-        for col_idx in range(len(tmp_board_col)) :
-            if tmp_board_row[row_idx][col_idx] == -1 :
-                board[row_idx][col_idx] = -1
-            if tmp_board_col[row_idx][col_idx] == -1 :
-                board[row_idx][col_idx] = -1
-
-
-    # 실행 후 가능한 경우의 수
-    after_row_cnt = 0
-    after_col_cnt = 0
-    
-    for key in row_casts :
-        new_list = []
-        for cast in row_casts[key] :
-            if is_can_cast(True, key, cast) :
-                new_list.append(cast)
-        after_row_cnt += len(new_list)
-        row_casts[key] = new_list
-
-    for key in col_casts :
-        new_list = []
-        for cast in col_casts[key] :
-            if is_can_cast(False, key, cast) :
-                new_list.append(cast)
-        after_col_cnt += len(new_list)
-        col_casts[key] = new_list
-    
-    if after_row_cnt == before_row_cnt and after_col_cnt == before_col_cnt :
-        break
-'''
-# 수정 코드
 def to_transport_board(tmp_borad, check) :
     if check :
         for row_idx, rows in enumerate(tmp_borad) :
@@ -358,7 +238,6 @@ def to_transport_board(tmp_borad, check) :
                 if ea == -1 :
                     board[row_idx][col_idx] = -1
 while True :
-    tries += 1
     # 전부 채워져 있는 보드 생성
     all_check_row = [[1 for _ in range(cols_cnt)] for __ in range(rows_cnt)]
     all_check_col = [[1 for _ in range(cols_cnt)] for __ in range(rows_cnt)]
@@ -424,16 +303,6 @@ col_casts = dict(sorted(col_casts.items(), key=lambda x : len(x[1])))
 row_keys = list(row_casts.keys())
 col_keys = list(col_casts.keys())
 
-print('after')
-a, b, c, d = 0, 0, 1, 1
-for key in row_casts :
-    a += len(row_casts[key])
-    c *= len(row_casts[key])
-    b += len(col_casts[key])
-    d *= len(col_casts[key])
-print(a, b)
-print(c, d)
-
 board = [[0 for _ in range(cols_cnt)] for _ in range(rows_cnt)]
 def dfs_is_can_cast(axis, idx, cast) :
     # row
@@ -454,8 +323,6 @@ def dfs_is_can_cast(axis, idx, cast) :
 def dfs(axis, idx) :
     if idx == len(board) :
         print_board(False)
-        end = time.time()
-        print(f"elapsed time : {round(end-start, 4)}")
         exit()
     
     else :
